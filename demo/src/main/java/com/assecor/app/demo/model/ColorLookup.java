@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Color {
+public class ColorLookup {
     private static final Map<Integer, String> colors = new HashMap<>(Map.of(
             1, "blau",
             2, "grün",
@@ -17,11 +17,11 @@ public class Color {
     ));
 
     public static String getColorById(int id) {
-        return Color.colors.get(id);
+        return ColorLookup.colors.get(id);
     }
 
     public static Optional<Integer> getIdFromColor(String color) {
-        return Color.colors.entrySet().stream()
+        return ColorLookup.colors.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), color))
                 .map(Map.Entry::getKey).findFirst();
     }

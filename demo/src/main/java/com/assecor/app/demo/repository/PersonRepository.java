@@ -1,19 +1,18 @@
 package com.assecor.app.demo.repository;
 
-import com.assecor.app.demo.DataSource;
+import com.assecor.app.demo.CsvDataSource;
 import com.assecor.app.demo.model.Person;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
 public class PersonRepository implements IRepository<Person> {
-    private final DataSource dataSource;
+    private final CsvDataSource dataSource;
 
-    public PersonRepository(DataSource dataSource) {
+    public PersonRepository(CsvDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
