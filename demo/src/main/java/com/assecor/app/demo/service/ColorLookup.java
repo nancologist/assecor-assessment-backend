@@ -25,4 +25,8 @@ public class ColorLookup {
                 .filter(entry -> Objects.equals(entry.getValue(), color))
                 .map(Map.Entry::getKey).findFirst();
     }
+
+    public static String getValidColors() {
+        return colors.values().toString();
+    }
 }

@@ -51,7 +51,7 @@ public class PersonController {
             PersonDto createdPersonDto = convertPersonToDto.apply(createdPerson);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPersonDto);
         } else {
-            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) not found", createDto.getColor())));
+            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) is invalid", createDto.getColor())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
@@ -59,18 +59,24 @@ public class PersonController {
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Optional<PersonDto> personDto = this.personService.getPersonById(id).map(convertPersonToDto);
-        return personDto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (personDto.isPresent()) {
+            return ResponseEntity.ok(personDto.get());
+        } else {
+            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Person with ID %d not found", id)));
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("color/{color}")
-    public ResponseEntity<List<PersonDto>> getByColor(@PathVariable String color) {
+    public ResponseEntity<?> getByColor(@PathVariable String color) {
         Optional<Integer> colorId = ColorLookup.getIdFromColor(color);
         if (colorId.isPresent()) {
             List<PersonDto> personDtos = this.personService.getPersonsByColor(colorId.get())
                     .stream().map(convertPersonToDto).collect(Collectors.toList());
             return ResponseEntity.ok(personDtos);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) is invalid. Valid colors: %s", color, ColorLookup.getValidColors())));
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

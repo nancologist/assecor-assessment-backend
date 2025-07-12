@@ -79,20 +79,19 @@ public class PersonControllerTest {
         mockMvc.perform(get("/persons/99")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title", is("Ressource nicht gefunden")))
-                .andExpect(jsonPath("$.detail", is("Person mit ID 99 nicht gefunden.")));
+                .andExpect(jsonPath("$.message", is("Person with ID 99 not found")));
     }
 
     @Test
     void testGetPersonsByColorFound() throws Exception {
-        List<Person> bluePersons = Arrays.asList(mockPersons.get(0));
+        List<Person> bluePersons = Arrays.asList(mockPersons.getFirst());
         when(personService.getPersonsByColor(1)).thenReturn(bluePersons);
 
         mockMvc.perform(get("/persons/color/blau")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("Hans")))
+                .andExpect(jsonPath("$[0].firstname", is("Hans")))
                 .andExpect(jsonPath("$[0].color", is("blau")));
     }
 
@@ -100,7 +99,11 @@ public class PersonControllerTest {
     void testGetPersonsByColorUnknownColor() throws Exception {
         mockMvc.perform(get("/persons/color/unknown")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(
+                        "$.message",
+                        is("Color (unknown) is invalid. Valid colors: [blau, grün, violett, rot, gelb, türkis, weiß]")
+                ));
     }
 
     @Test
