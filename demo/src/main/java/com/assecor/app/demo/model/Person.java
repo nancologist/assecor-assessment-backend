@@ -1,13 +1,24 @@
 package com.assecor.app.demo.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "persons")
 public class Person {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
     private String lastname;
+
+    @Column
     private String firstname;
+
+    @Column
     private String address;
+
+    @Column
     private int colorId;
 
     public Person() {}

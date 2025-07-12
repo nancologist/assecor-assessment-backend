@@ -12,6 +12,13 @@ public class PersonCreateDto {
     @NotBlank(message = "Color cannot be empty")
     private String color;
 
+    public PersonCreateDto(String lastname, String firstname, String address, String color) {
+        this.lastname = lastname;
+        this.firstname = firstname;
+        this.address = address;
+        this.color = color;
+    }
+
     public String getLastname() {
         return lastname;
     }
