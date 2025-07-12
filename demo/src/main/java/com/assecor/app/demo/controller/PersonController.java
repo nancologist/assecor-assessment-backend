@@ -39,18 +39,19 @@ public class PersonController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createPerson(@Valid @RequestBody PersonCreateDto dto) {
-        Optional<Integer> colorId = ColorLookup.getIdFromColor(dto.getColor());
+    public ResponseEntity<?> createPerson(@Valid @RequestBody PersonCreateDto createDto) {
+        Optional<Integer> colorId = ColorLookup.getIdFromColor(createDto.getColor());
         if (colorId.isPresent()) {
             Person person = new Person();
-            person.setLastname(dto.getLastname());
-            person.setFirstname(dto.getFirstname());
-            person.setAddress(dto.getLastname());
+            person.setLastname(createDto.getLastname());
+            person.setFirstname(createDto.getFirstname());
+            person.setAddress(createDto.getLastname());
             person.setColorId(colorId.get());
             Person createdPerson = personService.createPerson(person);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
+            PersonDto createdPersonDto = convertPersonToDto.apply(createdPerson);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPersonDto);
         } else {
-            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) not found", dto.getColor())));
+            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) not found", createDto.getColor())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
