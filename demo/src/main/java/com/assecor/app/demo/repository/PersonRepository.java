@@ -32,4 +32,9 @@ public class PersonRepository implements IRepository<Person> {
     public Optional<Person> findById(long id) {
         return this.dataSource.persons.stream().filter(p -> p.getId() == id).findFirst();
     }
+
+    @Override
+    public Person insert(Person person) {
+        return this.dataSource.insert(person);
+    }
 }

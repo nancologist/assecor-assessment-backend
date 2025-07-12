@@ -1,4 +1,4 @@
-package com.assecor.app.demo.model;
+package com.assecor.app.demo.service;
 
 import java.util.HashMap;
 import java.util.Map;

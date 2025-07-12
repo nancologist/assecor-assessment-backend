@@ -9,4 +9,6 @@ public interface IRepository<T> {
     List<T> findByColor(int colorId);
 
     Optional<T> findById(long id);
+
+    T insert(T t);
 }

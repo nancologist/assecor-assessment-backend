@@ -2,8 +2,8 @@ package com.assecor.app.demo.controller;
 
 import com.assecor.app.demo.dto.PersonCreateDto;
 import com.assecor.app.demo.dto.PersonDto;
-import com.assecor.app.demo.model.ColorLookup;
 import com.assecor.app.demo.model.Person;
+import com.assecor.app.demo.service.ColorLookup;
 import com.assecor.app.demo.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,8 +38,25 @@ public class PersonController {
         return ResponseEntity.ok(personDtos);
     }
 
+    @PostMapping()
+    public ResponseEntity<?> createPerson(@Valid @RequestBody PersonCreateDto dto) {
+        Optional<Integer> colorId = ColorLookup.getIdFromColor(dto.getColor());
+        if (colorId.isPresent()) {
+            Person person = new Person();
+            person.setLastname(dto.getLastname());
+            person.setFirstname(dto.getFirstname());
+            person.setAddress(dto.getLastname());
+            person.setColorId(colorId.get());
+            Person createdPerson = personService.createPerson(person);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
+        } else {
+            Map<String, String> response = new HashMap<>(Map.of("message", String.format("Color (%s) not found", dto.getColor())));
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("{id}")
-    public ResponseEntity<PersonDto> getById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         Optional<PersonDto> personDto = this.personService.getPersonById(id).map(convertPersonToDto);
         return personDto.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

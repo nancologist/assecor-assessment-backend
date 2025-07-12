@@ -16,25 +16,32 @@ import java.util.List;
 public class CsvDataSource {
     private static final String PATH = "src/main/resources/sample-input.csv";
     public final List<Person> persons = new ArrayList<>();
+    private static long generatedID = 1;
 
     @PostConstruct
     public void loadData() {
         try (java.io.Reader reader = new FileReader(PATH)) {
-            long id = 1;
             for (CSVRecord record : getRecords(reader)) {
                 Person person = new Person(
-                        id,
+                        generatedID,
                         record.get("lastname").trim(),
                         record.get("firstname").trim(),
                         record.get("address").trim(),
                         Integer.parseInt(record.get("colorId").trim())
                 );
                 persons.add(person);
-                id++;
+                generatedID++;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Person insert(Person person) {
+        person.setId(generatedID);
+        persons.add(person);
+        generatedID++;
+        return person;
     }
 
     private static CSVParser getRecords(java.io.Reader reader) throws IOException {

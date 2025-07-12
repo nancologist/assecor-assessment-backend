@@ -1,6 +1,5 @@
 package com.assecor.app.demo.service;
 
-import com.assecor.app.demo.dto.PersonCreateDto;
 import com.assecor.app.demo.model.Person;
 import com.assecor.app.demo.repository.IRepository;
 import org.springframework.stereotype.Service;
@@ -26,5 +25,9 @@ public class PersonService {
 
     public Optional<Person> getPersonById(long id) {
         return personRepository.findById(id);
+    }
+
+    public Person createPerson(Person person) {
+        return this.personRepository.insert(person);
     }
 }
